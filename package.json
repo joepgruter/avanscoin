@@ -1,0 +1,33 @@
+{
+  "name": "avanscoin",
+  "version": "1.0.0",
+  "description": "Blockchain implementation for a research paper",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joepgruter/avanscoin.git"
+  },
+  "keywords": [
+    "blockchain"
+  ],
+  "author": "Joep Gruter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joepgruter/avanscoin/issues"
+  },
+  "homepage": "https://github.com/joepgruter/avanscoin#readme",
+  "devDependencies": {
+    "typescript": "^4.0.5"
+  },
+  "dependencies": {
+    "@types/node": "^14.14.7",
+    "crypto-es": "^1.2.6",
+    "fast-sha256": "^1.3.0",
+    "js-sha256": "^0.9.0"
+  }
+}
