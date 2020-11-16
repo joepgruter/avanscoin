@@ -2,7 +2,7 @@ import AvansCoin from "./AvansCoin";
 import Transaction from "./Transaction";
 import Wallet from "./Wallet";
 
-const avansCoin = new AvansCoin(6, 50);
+const avansCoin = new AvansCoin(5, 50);
 
 const joep = new Wallet('Joep');
 const erdem = new Wallet('Erdem');
