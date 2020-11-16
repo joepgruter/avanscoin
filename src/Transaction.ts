@@ -26,11 +26,15 @@ export default class Transaction {
      * Calculate the hash of the current transaction using the sha256 algorithm
      */
     calculateHash(): string {
-        return sha256(this.from.address + this.to.address + this.amount);
+        let fromAddress: string;
+        if (this.from === null) fromAddress = 'null';
+        else fromAddress = this.from.address;
+
+        return sha256(fromAddress + this.to.address + this.amount);
     }
 
-    signTransaction(siginingKey: string): void {
-        const s = siginingKey;
-        s.length;
-    }
+    // signTransaction(siginingKey: string): void {
+    //     const s = siginingKey;
+    //     s.length;
+    // }
 }

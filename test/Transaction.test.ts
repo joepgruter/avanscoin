@@ -27,4 +27,15 @@ describe('Transaction', function () {
             new Transaction(null, wallet, -1);
         }).to.throw('Transaction amount can not be negative');
     });
+    it('Can calculate the hash of a transaction from a null wallet', function () {
+        const wallet = new Wallet('testOwner');
+        const transaction = new Transaction(null, wallet, 1);
+        expect(transaction.calculateHash().length).equal(64);
+    });
+    it('Can calculate the hash of a transaction from a regular wallet', function () {
+        const wallet1 = new Wallet('testOwner 1');
+        const wallet2 = new Wallet('testOwner 2');
+        const transaction = new Transaction(wallet1, wallet2, 0);
+        expect(transaction.calculateHash().length).equal(64);
+    });
 });

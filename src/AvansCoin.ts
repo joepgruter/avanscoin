@@ -42,7 +42,7 @@ export default class AvansCoin {
      * Mine the pending transactions to a new block in the chain for the set reward amount
      * @param rewardWallet Wallet that the mining reward is sent to
      */
-    minePendingTransactions(rewardWallet: Wallet): void {        
+    minePendingTransactions(rewardWallet: Wallet): void {
         const newBlock = new Block(this.pendingTransactions, 0, this.getLastBlock().getBlockHash());
         newBlock.mineBlock(this.miningDifficulty);
         this.chain.push(newBlock);
@@ -64,7 +64,7 @@ export default class AvansCoin {
      * @param transaction Transaction to be created
      */
     createTransaction(transaction: Transaction): void {
-        if(this.getWalletBalance(transaction.from) > transaction.amount) {
+        if (this.getWalletBalance(transaction.from) > transaction.amount) {
             this.pendingTransactions.push(transaction);
         } else {
             throw new Error('Balance not sufficient for transaction');
@@ -149,15 +149,5 @@ export default class AvansCoin {
         }
 
         return true;
-    }
-
-    toString(): string {
-        let res = '';
-
-        this.chain.forEach(block => {
-            res = res + `${block.toString()}\n`;
-        });
-
-        return res;
     }
 }

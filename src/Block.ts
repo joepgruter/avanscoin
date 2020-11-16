@@ -17,7 +17,7 @@ export default class Block {
         this.previousBlockHash = previousBlockHash;
 
         // Calculate the hash here if this block is the genesis block
-        if(previousBlockHash === 'Genesis Block') this.blockHash = this.calculateHash();
+        if (previousBlockHash === 'Genesis Block') this.blockHash = this.calculateHash();
     }
 
     /**
@@ -27,12 +27,11 @@ export default class Block {
     mineBlock(difficulty: number): void {
         console.log(`Mining new block...`);
 
-        while(this.blockHash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
-            this.blockHash = this.calculateHash();
+        while (this.blockHash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+            this.timestamp = new Date();
             this.nonce++;
+            this.blockHash = this.calculateHash();
         }
-        
-        this.timestamp = new Date();
 
         console.log(`New block mined: ${this.blockHash}`);
     }
@@ -48,7 +47,7 @@ export default class Block {
      * Return the calculated hash of the current block
      */
     getBlockHash(): string {
-        if(this.blockHash !== 'null') return this.blockHash;
+        if (this.blockHash !== 'null') return this.blockHash;
         else throw new Error('Cannot get block hash, block has not been mined');
     }
 
@@ -68,9 +67,5 @@ export default class Block {
 
     getTimestamp(): Date {
         return this.timestamp;
-    }
-
-    toString(): string {
-        return `Block - ${this.timestamp.toUTCString()} - Hash: ${this.blockHash} - Previous Hash: ${this.previousBlockHash} - Transactions: ${JSON.stringify(this.transactions)}`;
     }
 }

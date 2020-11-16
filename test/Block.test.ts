@@ -18,11 +18,11 @@ describe('Block', function() {
         block.mineBlock(3);
         expect(block.getBlockHash().substring(0, 3)).equal('000');
     });
-    it('Mining difficulty of 5 results in hash starting with 5 zeroes', function() {
+    it('Mining difficulty of 4 results in hash starting with 4 zeroes', function() {
         const block = new Block([], 0, 'test');
-        block.mineBlock(5);
-        expect(block.getBlockHash().substring(0, 5)).equal('00000');
-    });
+        block.mineBlock(4);
+        expect(block.getBlockHash().substring(0, 4)).equal('0000');
+    }).timeout(100000);
     it('Throws an error on getBlockHash() if block has not yet been mined', function() {
         const block = new Block([], 0, 'test');
 
