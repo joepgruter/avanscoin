@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "nodemon",
     "test": "mocha -r ts-node/register test/**/*.test.ts",
-    "coverage": "nyc -r text -e .ts -x \"tests/*.test.ts\" npm run test",
+    "coverage": "nyc -r text -e .ts -x \"test/*.test.ts\" npm run test",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "repository": {

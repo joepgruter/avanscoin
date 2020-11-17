@@ -7,9 +7,14 @@ import Wallet from './Wallet';
  */
 export default class AvansCoin {
     chain: Array<Block> = [];
-    miningDifficulty: number;
-    miningReward: number;
     pendingTransactions: Array<Transaction> = [];
+    miningReward: number;
+    miningDifficulty: number;
+
+    private targetMiningTimeMs = 10000;
+    private averageMiningTimeMs = 0;
+    private mineTimesSinceRecheck: Array<number> = [];
+    private difficultyRecheckBufferSize = 3;
 
     constructor(miningDifficulty: number, miningReward: number) {
         this.miningDifficulty = miningDifficulty;
@@ -43,13 +48,63 @@ export default class AvansCoin {
      * @param rewardWallet Wallet that the mining reward is sent to
      */
     minePendingTransactions(rewardWallet: Wallet): void {
-        const newBlock = new Block(this.pendingTransactions, 0, this.getLastBlock().getBlockHash());
-        newBlock.mineBlock(this.miningDifficulty);
-        this.chain.push(newBlock);
+        console.log(`Mining new block...`);
 
+        // Create new block containing current pending transactions
+        const newBlock = new Block(this.pendingTransactions, 0, this.getLastBlock().getBlockHash());
+        
+        // Start mining the created block
+        newBlock.mineBlock(this.miningDifficulty);
+
+        // Add the block to the chain when mining is done
+        this.chain.push(newBlock);
+        console.log(`Mining took ${Math.floor((newBlock.getMineTimeMs() / 1000) * 1000) / 1000}s on difficulty ${this.miningDifficulty}`);
+
+        // Add the mining time to the array of the last 50 mined blocks
+        if (this.mineTimesSinceRecheck.length < 50) {
+            this.mineTimesSinceRecheck.push(newBlock.getMineTimeMs());
+        } else {
+            this.mineTimesSinceRecheck.shift();
+            this.mineTimesSinceRecheck.push(newBlock.getMineTimeMs());
+        }
+
+        // Update average mining time
+        this.averageMiningTimeMs = this.mineTimesSinceRecheck.reduce((a, b) => a + b) / this.mineTimesSinceRecheck.length - 1;
+        console.log(`Average mining time is now ${Math.floor((this.averageMiningTimeMs / 1000) * 1000) / 1000}s over the last ${this.mineTimesSinceRecheck.length} blocks`);
+
+        // Check if the mining difficulty matches the target mining time after the last 10 blocks
+        if (this.mineTimesSinceRecheck.length >= this.difficultyRecheckBufferSize) {
+
+            // Get the percentage of the average mining time vs the targeted mining time
+            const offsetPercentage = this.averageMiningTimeMs / this.targetMiningTimeMs;
+            console.log(`Offsetpercentage: ${offsetPercentage}`);
+
+            if (offsetPercentage > 1.5) {
+                console.log(`Mining seems too difficult (${Math.floor((this.averageMiningTimeMs / 1000) * 1000) / 1000}s vs targeted ${this.targetMiningTimeMs / 1000}s), decreasing difficulty from ${this.miningDifficulty} to ${this.miningDifficulty - 1}`);
+                
+                // Decrease mining difficulty with 1
+                this.miningDifficulty--;
+
+                // Reset the average counter
+                this.mineTimesSinceRecheck = [];
+            } else if (offsetPercentage < 0.5) {
+                console.log(`Mining seems too easy (${Math.floor((this.averageMiningTimeMs / 1000) * 1000) / 1000}s vs targeted ${this.targetMiningTimeMs / 1000}s), increasing difficulty from ${this.miningDifficulty} to ${this.miningDifficulty + 1}`);
+                
+                // Increase mining difficulty with 1
+                this.miningDifficulty++;
+
+                // Reset the average counter
+                this.mineTimesSinceRecheck = [];
+            } else {
+                console.log(`Difficulty does not need to change`);                
+            }
+        }
+
+        // Add minging reward transaction to the pending transactions array
         this.pendingTransactions = [
             new Transaction(null, rewardWallet, this.miningReward)
         ];
+        console.log();
     }
 
     /**

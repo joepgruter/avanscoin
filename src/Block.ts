@@ -1,4 +1,5 @@
 import { sha256 } from 'js-sha256';
+import { performance } from 'perf_hooks';
 import Transaction from "./Transaction";
 
 /**
@@ -10,6 +11,10 @@ export default class Block {
     private nonce: number;
     private blockHash = 'null';
     private previousBlockHash: string;
+    /**
+     * Amount of miliseconds the block took to mine
+     */
+    private mineTimeMs: number;
 
     constructor(transactions: Transaction[], nonce: number, previousBlockHash: string) {
         this.transactions = transactions;
@@ -25,7 +30,8 @@ export default class Block {
      * @param difficulty Number of zeroes required at the start of the hash
      */
     mineBlock(difficulty: number): void {
-        console.log(`Mining new block...`);
+        // Get current high resolution timestamp for measuring mining time
+        const t0 = performance.now();
 
         while (this.blockHash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
             this.timestamp = new Date();
@@ -33,7 +39,9 @@ export default class Block {
             this.blockHash = this.calculateHash();
         }
 
-        console.log(`New block mined: ${this.blockHash}`);
+        // Get current high resolution timestamp and calculate mining time
+        const t1 = performance.now();
+        this.mineTimeMs = t1 - t0;
     }
 
     /**
@@ -63,6 +71,10 @@ export default class Block {
      */
     getTransactions(): Array<Transaction> {
         return this.transactions;
+    }
+
+    getMineTimeMs(): number {
+        return this.mineTimeMs;
     }
 
     getTimestamp(): Date {
