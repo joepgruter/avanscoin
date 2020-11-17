@@ -8,7 +8,7 @@ import Transaction from "./Transaction";
 export default class Block {
     private timestamp: Date;
     private transactions: Transaction[];
-    private nonce: number;
+    private nonce = 0;
     private blockHash = 'null';
     private previousBlockHash: string;
     /**
@@ -16,9 +16,13 @@ export default class Block {
      */
     private mineTimeMs: number;
 
-    constructor(transactions: Transaction[], nonce: number, previousBlockHash: string) {
+    /**
+     * Creates a Block that holds an array of transactions that can be mined
+     * @param transactions Array of transactions to be included in the block
+     * @param previousBlockHash The hash of the last mined block on the chain
+     */
+    constructor(transactions: Transaction[], previousBlockHash: string) {
         this.transactions = transactions;
-        this.nonce = nonce;
         this.previousBlockHash = previousBlockHash;
 
         // Calculate the hash here if this block is the genesis block

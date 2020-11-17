@@ -2,9 +2,6 @@ import Block from './Block';
 import Transaction from './Transaction';
 import Wallet from './Wallet';
 
-/**
- * Blockchain implementation that creates a chain of blocks that hold transactions. These block can be mined at a certain difficulty for a mining reward.
- */
 export default class AvansCoin {
     chain: Array<Block> = [];
     pendingTransactions: Array<Transaction> = [];
@@ -16,7 +13,14 @@ export default class AvansCoin {
     private mineTimesSinceRecheck: Array<number> = [];
     private difficultyRecheckBufferSize = 3;
 
-    constructor(miningDifficulty: number, miningReward: number) {
+    /**
+     * Blockchain implementation that creates a chain of blocks that hold transactions. These block can be mined at a certain difficulty for a mining reward.
+     * @param targetMiningTimeMs Target amount of ms to mine one block
+     * @param miningDifficulty Initial mining difficulty
+     * @param miningReward Amount of coins to be rewarded for minging one block
+     */
+    constructor(targetMiningTimeMs: number, miningDifficulty: number, miningReward: number) {
+        this.targetMiningTimeMs = targetMiningTimeMs;
         this.miningDifficulty = miningDifficulty;
         this.miningReward = miningReward;
         const genesisBlock = this.createGenesisBlock();
@@ -51,7 +55,7 @@ export default class AvansCoin {
         console.log(`Mining new block...`);
 
         // Create new block containing current pending transactions
-        const newBlock = new Block(this.pendingTransactions, 0, this.getLastBlock().getBlockHash());
+        const newBlock = new Block(this.pendingTransactions, this.getLastBlock().getBlockHash());
         
         // Start mining the created block
         newBlock.mineBlock(this.miningDifficulty);
